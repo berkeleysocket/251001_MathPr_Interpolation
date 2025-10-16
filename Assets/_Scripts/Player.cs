@@ -15,7 +15,7 @@ namespace Ksy.Entity.Player
 
         private void Awake()
         {
-            RbCompo = gameObject.AddComponent<Rigidbody2D>();
+            RbCompo = GetComponent<Rigidbody2D>();
             RbCompo.gravityScale = 0;
 
             InputCompo = gameObject.AddComponent<PlayerInput>();
@@ -24,6 +24,35 @@ namespace Ksy.Entity.Player
 
             MovementCompo = gameObject.AddComponent<PlayerMovement>();
             MovementCompo.Initialization(this);
+        }
+        float currentTime = 0f;
+        float sendRate = 0.5f;
+        private void Update()
+        {
+            currentTime += Time.deltaTime;
+            if(currentTime >= sendRate)
+            {
+                currentTime = 0f;
+                if(Client.networkSender != null)
+                {
+                    Client.networkSender.Send(Serialization(transform.position));
+                }
+            }
+        }
+        //private void FixedUpdate()
+        //{
+        //    if(Client.networkSender != null)
+        //    {
+        //        Client.networkSender.Send(Serialization(transform.position));
+        //    }
+        //}
+        public PlayerData Serialization(Vector2 pos)
+        {
+            PlayerData myData = new PlayerData();
+
+            myData.Position = pos;
+
+            return myData;
         }
     }
 

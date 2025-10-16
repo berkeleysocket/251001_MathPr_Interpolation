@@ -9,19 +9,21 @@ namespace Ksy.Network
 {
     public class NetworkListener : MonoBehaviour
     {
-        [SerializeField] private GameObject otherPlayer;
-
         private Client _client;
 
         private Socket _listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         private IPEndPoint _iP = new IPEndPoint(IPAddress.Any, 7777);
         //private List<Socket> _connectClient = new List<Socket>();
 
-        public void StartSync(Client client)
+        public void Init(Client client)
         {
             this._client = client;
+        }
+        public void StartSync()
+        {
             Thread thread = new Thread(Listen);
             thread.Start();
+            Debug.Log("Try Listen");
         }
         private void Listen()
         {
@@ -31,17 +33,21 @@ namespace Ksy.Network
             while (true)
             {
                 Socket connectClient = _listener.Accept();
+                _client.networkSender.otherClient = connectClient;
+                Debug.Log($"<color=green>Success Listen client</color>");
                 //_connectClient.Add(connectClient);
-                Thread listener = new Thread(()=>Listen(connectClient));
+                Thread listener = new Thread(()=> Receive(connectClient));
                 listener.Start();
                 return;
             }
         }
 
-        public void Listen(Socket sender)
+        public void Receive(Socket sender)
         {
-            while(true)
+            while (true)
             {
+                Debug.Assert(sender != null, "<color=red>수신을 받으려 하는 클라이언트 소켓이 NULL입니다.");
+
                 byte[] bytes = new byte[1024];
                 int length = sender.Receive(bytes);
                 try
@@ -51,9 +57,10 @@ namespace Ksy.Network
 
                     if (otherPlayerData != null)
                     {
-                        if (otherPlayer != null)
+                        if (_client.OtherPlayer != null)
                         {
-                            otherPlayer.transform.position = otherPlayerData.Position;
+                            Debug.Log($"<color=green>Success Receive</color>");
+                            _client.otherPlayerPos = otherPlayerData.Position;
                         }
                     }
                 }
@@ -62,9 +69,9 @@ namespace Ksy.Network
                     Debug.Log(e.ToString());
                     continue;
                 }
-                catch
+                catch (System.Exception e)
                 {
-                    Debug.Log("Unknown Error");
+                    Debug.Log($"<color=red>Error : {e}</color>");
                 }
             }
         }

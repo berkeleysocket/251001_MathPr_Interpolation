@@ -9,16 +9,20 @@ namespace Ksy.Network
 {
     public class NetworkSender : MonoBehaviour
     {
-        [SerializeField] private GameObject _myPlayer;
+        private Client _client;
 
         private Socket _sender = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        private Socket _otherClient = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        private Client _client;
-        public void StartSync(Client client)
+        public Socket otherClient = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+        public void Init(Client client)
         {
             this._client = client;
+        }
+        public void StartSync()
+        {
             Thread thread = new Thread(Connect);
             thread.Start();
+            Debug.Log("Try Connecting");
         }
         public void Connect()
         {
@@ -30,11 +34,12 @@ namespace Ksy.Network
             //ProtocolType protocolT = ProtocolType.Tcp;
 
             //블로킹 함수임
-            _otherClient.Connect(endPoint);
+            otherClient.Connect(endPoint);
+            Debug.Log($"<color=green>Success Find client</color>");
 
             //수신 스레드 생성
             //Thread thread_send = new Thread(() => SendMessage(server));
-            Thread receiver = new Thread(() => _client.networkListener.Listen(_otherClient));
+            Thread receiver = new Thread(() => _client.networkListener.Receive(otherClient));
 
             //스레드 시작
             receiver.Start();
@@ -42,26 +47,27 @@ namespace Ksy.Network
 
         public void Send(PlayerData myData)
         {
-            while (true)
-            {
-                byte[] bff = new byte[1024];
+            if (otherClient == null) return;
+            byte[] bff = new byte[1024];
 
-                try
-                {
-                    string _myData = JsonUtility.ToJson(myData);
-                    int length = Encoding.UTF8.GetBytes(_myData, 0, _myData.Length, bff, 0);
-                    _otherClient.Send(bff,length,SocketFlags.None);
-                }
-                catch (SocketException e)
-                {
-                    Debug.Log(e.ToString());
-                    continue;
-                }
-                catch
-                {
-                    Debug.Log("Unknown Error");
-                }
+            try
+            {
+                string _myData = JsonUtility.ToJson(myData);
+                int length = Encoding.UTF8.GetBytes(_myData, 0, _myData.Length, bff, 0);
+                otherClient.Send(bff, length, SocketFlags.None);
             }
+            catch (SocketException e)
+            {
+                Debug.Log(e.ToString());
+                return;
+            }
+            catch
+            {
+                Debug.Log("Unknown Error");
+                return;
+            }
+
+            Debug.Log($"<color=green>Success Send</color>");
         }
     }
 }
