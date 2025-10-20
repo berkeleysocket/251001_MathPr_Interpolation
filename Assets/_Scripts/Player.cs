@@ -5,12 +5,16 @@ namespace Ksy.Entity.Player
 {
     public class Player : MonoBehaviour
     {
+
         public PlayerInput InputCompo { get; private set; }
         public PlayerMovement MovementCompo { get; private set; }
-        public Rigidbody2D RbCompo { get; private set; }
+        public Rigidbody2D RbCompo;
 
         [field : SerializeField]
         public Client Client { get; private set; }
+
+        float currentTime = 0f;
+        public float sendRate = 0.01f;
 
 
         private void Awake()
@@ -20,42 +24,20 @@ namespace Ksy.Entity.Player
 
             InputCompo = gameObject.AddComponent<PlayerInput>();
             InputCompo.Initialization(this);
-            //InputCompo = gameObject.GetComponent<PlayerInput>();
 
             MovementCompo = gameObject.AddComponent<PlayerMovement>();
             MovementCompo.Initialization(this);
         }
-        float currentTime = 0f;
-        float sendRate = 0.5f;
-        private void Update()
-        {
-            currentTime += Time.deltaTime;
-            if(currentTime >= sendRate)
-            {
-                currentTime = 0f;
-                if(Client.networkSender != null)
-                {
-                    Client.networkSender.Send(Serialization(transform.position));
-                }
-            }
-        }
-        //private void FixedUpdate()
-        //{
-        //    if(Client.networkSender != null)
-        //    {
-        //        Client.networkSender.Send(Serialization(transform.position));
-        //    }
-        //}
-        public PlayerData Serialization(Vector2 pos)
+        public PlayerData Serialization(Vector2 pos, Vector2 dir)
         {
             PlayerData myData = new PlayerData();
 
             myData.Position = pos;
+            myData.MoveDir = dir;
 
             return myData;
         }
     }
-
     public interface IPlayerComponent
     {
         public void Initialization(Player player);

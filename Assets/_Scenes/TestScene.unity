@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 210598817}
   - component: {fileID: 210598816}
   - component: {fileID: 210598818}
+  - component: {fileID: 210598819}
   m_Layer: 0
   m_Name: Other
   m_TagString: Untagged
@@ -222,7 +223,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -234,6 +235,21 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &210598819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 210598815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6d4e8ae7e10eea42b64fa6be179d2c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <MoveSpeed>k__BackingField: 5
+  MoveDir: {x: 0, y: 0}
+  RbCompo: {fileID: 0}
 --- !u!1 &247947974
 GameObject:
   m_ObjectHideFlags: 0
@@ -294,6 +310,8 @@ MonoBehaviour:
   <MyPlayer>k__BackingField: {fileID: 381572284}
   <OtherPlayer>k__BackingField: {fileID: 210598818}
   otherPlayerPos: {x: 0, y: 0}
+  IsLinearInterpolation: 0
+  SyncPosSecondes: 0.01
 --- !u!4 &247947978
 Transform:
   m_ObjectHideFlags: 0
@@ -411,7 +429,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e54ede1e46ee37b40bb2f826699fe9d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  RbCompo: {fileID: 0}
   <Client>k__BackingField: {fileID: 247947977}
+  sendRate: 0.1
 --- !u!114 &381572283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -457,7 +477,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2

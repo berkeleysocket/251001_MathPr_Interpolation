@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using UnityEngine;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Ksy.Network
@@ -61,6 +60,7 @@ namespace Ksy.Network
                         {
                             Debug.Log($"<color=green>Success Receive</color>");
                             _client.otherPlayerPos = otherPlayerData.Position;
+                            _client.OtherPlayer.GetComponent<Ksy.Entity.Player.Player>().MovementCompo.MoveDir = otherPlayerData.MoveDir;
                         }
                     }
                 }

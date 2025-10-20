@@ -9,4 +9,5 @@ public class NetworkData : MonoBehaviour
 public class PlayerData
 {
     public Vector2 Position;
+    public Vector2 MoveDir;
 }
