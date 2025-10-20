@@ -13,10 +13,6 @@ namespace Ksy.Entity.Player
         [field : SerializeField]
         public Client Client { get; private set; }
 
-        float currentTime = 0f;
-        public float sendRate = 0.01f;
-
-
         private void Awake()
         {
             RbCompo = GetComponent<Rigidbody2D>();

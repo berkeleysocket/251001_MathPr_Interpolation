@@ -1,6 +1,7 @@
 using Ksy.Network;
 using System.Collections;
 using System.Threading;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -16,11 +17,11 @@ public class Client : MonoBehaviour
 
     public Vector2 otherPlayerPos = Vector2.zero;
     public Coroutine syncPos = null;
-    public bool IsLinearInterpolation = false;
-    //public bool IsLinearInterpolation = false;
+    public bool IsLinearInterpolation_1 = false;
+    public float SyncPosSecondes_IsLinearInterpolation_1 = 0.01f;
     public float SyncPosSecondes = 0.001f;
 
-    private void Awake()
+    private void Awake()                                            
     {
         //메인스레드 파싱
         if (MainTread == null) MainTread = System.Threading.Thread.CurrentThread;
@@ -33,28 +34,32 @@ public class Client : MonoBehaviour
     }
 
     private void Update()
-    {
+    {                                                   
         if(Keyboard.current.digit0Key.wasPressedThisFrame)
         {
             networkSender.StartSync();
         }
         else if(Keyboard.current.digit1Key.wasPressedThisFrame)
         {
-            networkListener.StartSync();
-        }
+            networkListener.StartSync();                                                                                  
+        }                        
 
-        if(Keyboard.current.digit2Key.wasPressedThisFrame)
-        {
-            IsLinearInterpolation = !IsLinearInterpolation;
-        }
+        //if(Keyboard.current.digit2Key.wasPressedThisFrame)
+        //{
+        //    IsLinearInterpolation = !IsLinearInterpolation;
+        //}
 
-        if (!IsLinearInterpolation)
+        //if (!IsLinearInterpolation)
+        //{
+        //    OtherPlayer.transform.position = otherPlayerPos;
+        //}
+        //else if (syncPos == null)
+        //{
+        //    Debug.Log("IsLinearInterpolation");
+        //    //syncPos = StartCoroutine(SyncPos());
+        //}
+        if (syncPos == null && IsLinearInterpolation_1)
         {
-            OtherPlayer.transform.position = otherPlayerPos;
-        }
-        else if (syncPos == null)
-        {
-            Debug.Log("IsLinearInterpolation");
             syncPos = StartCoroutine(SyncPos());
         }
     }
@@ -66,10 +71,19 @@ public class Client : MonoBehaviour
 
         for (int g = 1; g <= 10; g++)
         {
+            OtherPlayer.linearVelocity = Vector2.zero;
             OtherPlayer.transform.position = Lerp(last, current, (float)g / 10f);
-            yield return new WaitForSeconds(SyncPosSecondes);
+            if(IsLinearInterpolation_1)
+            {
+                yield return new WaitForSeconds(SyncPosSecondes_IsLinearInterpolation_1);
+            }
+            else
+            {
+                yield return new WaitForSeconds(SyncPosSecondes);
+            }
         }
 
+        IsLinearInterpolation_1 = false;
         syncPos = null;
     }
 

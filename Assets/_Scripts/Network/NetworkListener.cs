@@ -12,11 +12,13 @@ namespace Ksy.Network
 
         private Socket _listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         private IPEndPoint _iP = new IPEndPoint(IPAddress.Any, 7777);
+        private OtherPlayerMovement _otherMovement;
         //private List<Socket> _connectClient = new List<Socket>();
 
         public void Init(Client client)
         {
             this._client = client;
+            _otherMovement = _client.OtherPlayer.GetComponent<OtherPlayerMovement>();
         }
         public void StartSync()
         {
@@ -58,14 +60,18 @@ namespace Ksy.Network
                     {
                         if (_client.OtherPlayer != null)
                         {
-                            Debug.Log($"<color=green>Success Receive</color>");
+                            //Debug.Log($"<color=green>Success Receive</color>");
                             _client.otherPlayerPos = otherPlayerData.Position;
-                            _client.OtherPlayer.GetComponent<Ksy.Entity.Player.Player>().MovementCompo.MoveDir = otherPlayerData.MoveDir;
+
+                            //Vector2 moveDir = otherPlayerData.MoveDir - _otherMovement.MoveDir;
+                            _otherMovement.MoveDir = otherPlayerData.MoveDir;
+
+                            _client.IsLinearInterpolation_1 = true;
                         }
                     }
                 }
                 catch (SocketException e)
-                {
+                {       
                     Debug.Log(e.ToString());
                     continue;
                 }

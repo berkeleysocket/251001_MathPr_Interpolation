@@ -67,7 +67,7 @@ namespace Ksy.Network
                 return;
             }
 
-            Debug.Log($"<color=green>Success Send</color>");
+            //Debug.Log($"<color=green>Success Send</color>");
         }
     }
 }
