@@ -73,6 +73,7 @@ public class Client : MonoBehaviour
         {
             OtherPlayer.linearVelocity = Vector2.zero;
             OtherPlayer.transform.position = Lerp(last, current, (float)g / 10f);
+
             if(IsLinearInterpolation_1)
             {
                 yield return new WaitForSeconds(SyncPosSecondes_IsLinearInterpolation_1);
@@ -88,6 +89,24 @@ public class Client : MonoBehaviour
     }
 
     private Vector2 Lerp(Vector2 start, Vector2 end, float value)
+    {
+        float _value = Mathf.Clamp(value, 0, 1);
+
+        float x_start = start.x;
+        float y_start = start.y;
+
+        float x_end = end.x;
+        float y_end = end.y;
+
+        //°è»ê
+        float lerpX = x_start + (x_end - x_start) * _value;
+        float lerpY = y_start + (y_end - y_start) * _value;
+
+        Vector2 result = new Vector2(lerpX, lerpY);
+
+        return result;
+    }
+    private Vector2 Slerp(Vector2 start, Vector2 end, float value)
     {
         float _value = Mathf.Clamp(value, 0, 1);
 

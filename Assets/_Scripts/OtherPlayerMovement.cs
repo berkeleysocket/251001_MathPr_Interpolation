@@ -1,4 +1,3 @@
-using Ksy.Entity.Player;
 using UnityEngine;
 
 public class OtherPlayerMovement : MonoBehaviour
